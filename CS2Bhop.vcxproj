@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>CS2Bhop</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <!-- Include directories -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+        $(ProjectDir)sdk;
+        $(ProjectDir)src;
+        $(ProjectDir)deps\minhook\include;
+        $(ProjectDir)deps\imgui;
+        $(ProjectDir)deps\imgui\backends;
+        $(ProjectDir)build\_deps\minhook-src\include;
+        $(ProjectDir)build\_deps\imgui-src;
+        $(ProjectDir)build\_deps\imgui-src\backends;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        WIN32_LEAN_AND_MEAN;
+        NOMINMAX;
+        UNICODE;
+        _UNICODE;
+        %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>
+        d3d11.lib;
+        dxgi.lib;
+        user32.lib;
+        gdi32.lib;
+        kernel32.lib;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <!-- Source files -->
+  <ItemGroup>
+    <!-- Our code -->
+    <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\cheat.cpp" />
+    <ClCompile Include="src\hooks.cpp" />
+    <ClCompile Include="src\menu.cpp" />
+    <ClCompile Include="src\utils.cpp" />
+    <!-- ImGui sources - prefer fetched from previous cmake, fallback to deps\ -->
+    <ClCompile Include="build\_deps\imgui-src\imgui.cpp" />
+    <ClCompile Include="build\_deps\imgui-src\imgui_draw.cpp" />
+    <ClCompile Include="build\_deps\imgui-src\imgui_widgets.cpp" />
+    <ClCompile Include="build\_deps\imgui-src\imgui_tables.cpp" />
+    <ClCompile Include="build\_deps\imgui-src\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="build\_deps\imgui-src\backends\imgui_impl_dx11.cpp" />
+
+    <!-- If the above don't exist, user can change to deps\ or run cmake -G "Visual Studio..." to populate -->
+    <!-- MinHook sources compiled directly into the DLL (most reliable, no external .lib dependency).
+         We point at the sources that were fetched by the earlier cmake run into build\_deps.
+         If you haven't run cmake yet, run:  cmake -G "Visual Studio 17 2022" -A x64 -B build
+         Alternative: clone minhook into deps/minhook and update the paths below. -->
+    <ClCompile Include="build\_deps\minhook-src\src\hook.c" />
+    <ClCompile Include="build\_deps\minhook-src\src\buffer.c" />
+    <ClCompile Include="build\_deps\minhook-src\src\trampoline.c" />
+    <ClCompile Include="build\_deps\minhook-src\src\hde\hde32.c" />
+    <ClCompile Include="build\_deps\minhook-src\src\hde\hde64.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sdk\cs2_sdk.h" />
+    <ClInclude Include="src\cheat.h" />
+    <ClInclude Include="src\hooks.h" />
+    <ClInclude Include="src\menu.h" />
+    <ClInclude Include="src\utils.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
